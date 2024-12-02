@@ -45,12 +45,12 @@ class ImageProjection {
 
   pcl::PointCloud<PointType>::Ptr laserCloudIn;
 
-  pcl::PointCloud<PointType>::Ptr fullCloud;
+  pcl::PointCloud<PointType>::Ptr fullCloud; // 该次扫描的全部点
   pcl::PointCloud<PointType>::Ptr fullInfoCloud;
 
   pcl::PointCloud<PointType>::Ptr groundCloud;
-  pcl::PointCloud<PointType>::Ptr segmentedCloud;
-  pcl::PointCloud<PointType>::Ptr segmentedCloudPure;
+  pcl::PointCloud<PointType>::Ptr segmentedCloud; // 下一步使用的点云
+  pcl::PointCloud<PointType>::Ptr segmentedCloudPure; // 去除了地面和无效聚类的离散点
   pcl::PointCloud<PointType>::Ptr outlierCloud;
 
   PointType nanPoint;
@@ -179,13 +179,17 @@ class ImageProjection {
     findStartEndAngle();
     projectPointCloud();
     groundRemoval();
+
+    // 使用BFS扩展搜索，进行聚类，给labelMat矩阵进行赋值
     cloudSegmentation();
     publishCloud();
     resetParameters();
   }
 
+  // 获取一帧扫描的起始角度、结束角度
   void findStartEndAngle() {
-    // 雷达坐标系：右->X,前->Y,上->Z
+    // 雷达坐标系：右->X,前->Y,上->Z 
+    // [这是velodyne官方给的坐标系，但是ros驱动进行了改变，x轴向前]
     // 雷达内部旋转扫描方向：Z轴俯视下来，顺时针方向（Z轴右手定则反向）
 
     // atan2(y,x)函数的返回值范围(-PI,PI],表示与复数x+yi的幅角

@@ -151,6 +151,19 @@ class FeatureAssociation {
   float pointSearchSurfInd2[N_SCAN * Horizon_SCAN];
   float pointSearchSurfInd3[N_SCAN * Horizon_SCAN];
 
+  /// 相机坐标系（c系）及其对应的导航坐标系n'  |   载体坐标系(b系)及其对应的导航坐标系n
+  ///                                    |
+  ///           y    z（前进方向）         |              z    x（前进方向）
+  //            ^    ^                   |              ^    ^
+  //            |   /                    |              |   /
+  //            |  /                     |              |  /
+  //            | /                      |              | /
+  //            |/                       |              |/
+  //  x<--------.                        |    y<--------.
+  //
+  // transformCur[0]: (相机坐标系c系)绕x轴的旋转量 (也就是imu读数的pitch(载体坐标系b系)绕y轴的旋转量)
+  // transformCur[1]: (相机坐标系c系)绕y轴的旋转量 (也就是imu读数的yaw(载体坐标系b系)绕z轴的旋转量)
+  // transformCur[2]: (相机坐标系c系)绕z轴的旋转量 (也就是imu读数的roll(载体坐标系b系)绕x轴的旋转量)
   float transformCur[6];
   float transformSum[6];
 
